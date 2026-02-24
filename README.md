@@ -6,6 +6,25 @@ A collection of security assessment reports generated using Shannon, covering va
 
 These reports document the security assessment of the [OWASP Juice Shop](https://github.com/juice-shop/juice-shop) project running locally. OWASP Juice Shop is an intentionally vulnerable web application designed for security training and testing.
 
+## Table of Contents
+
+Quick links to all security assessment reports:
+
+- [comprehensive_security_assessment_report.md](./comprehensive_security_assessment_report.md)
+- [auth_analysis_deliverable.md](./auth_analysis_deliverable.md)
+- [auth_exploitation_evidence.md](./auth_exploitation_evidence.md)
+- [authz_analysis_deliverable.md](./authz_analysis_deliverable.md)
+- [authz_exploitation_evidence.md](./authz_exploitation_evidence.md)
+- [authz_final_report.md](./authz_final_report.md)
+- [code_analysis_deliverable.md](./code_analysis_deliverable.md)
+- [injection_analysis_deliverable.md](./injection_analysis_deliverable.md)
+- [injection_exploitation_evidence.md](./injection_exploitation_evidence.md)
+- [recon_deliverable.md](./recon_deliverable.md)
+- [ssrf_analysis_deliverable.md](./ssrf_analysis_deliverable.md)
+- [ssrf_exploitation_evidence.md](./ssrf_exploitation_evidence.md)
+- [xss_analysis_deliverable.md](./xss_analysis_deliverable.md)
+- [xss_exploitation_evidence.md](./xss_exploitation_evidence.md)
+
 ## Contents
 
 This repository contains the following security analysis deliverables:
