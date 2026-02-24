@@ -60,6 +60,53 @@ This repository contains the following security analysis deliverables:
 
 These reports are reference materials from Shannon security testing. Each deliverable contains analysis findings, exploitation evidence, and test scenarios for their respective vulnerability classes.
 
+## Vulnerability Summary
+
+This table provides a comprehensive overview of all vulnerabilities and exploits identified across the security assessment:
+
+| Exploit Category | Exploit Type | Count |
+|---|---|---|
+| **Authentication** | Brute Force Attacks | 3 |
+| | Credential Cracking (MD5 Hash Weakness) | 2 |
+| | Session Hijacking (Cookie Theft) | 2 |
+| | Rate Limit Bypass | 1 |
+| | User Enumeration | 2 |
+| | Session Persistence After Logout | 1 |
+| | Hardcoded Cryptographic Secrets (JWT/HMAC) | 2 |
+| **Authentication Total** | **13 Vulnerabilities** | **13** |
+| **Authorization** | Privilege Escalation | 6 |
+| | Access Control Bypass | 8 |
+| | Data Exposure (Payment/User Data) | 9 |
+| **Authorization Total** | **23 Vulnerabilities** | **23** |
+| **Injection Attacks** | SQL Injection | 5 |
+| | NoSQL Injection | 3 |
+| | Template Injection / SSTI | 2 |
+| | Code/Remote Code Execution (RCE) | 3 |
+| | Path Traversal / LFI | 3 |
+| | XXE / XML External Entity | 2 |
+| **Injection Total** | **18 Vulnerabilities** | **18** |
+| **Cross-Site Scripting (XSS)** | DOM-Based XSS | 1 |
+| | Stored XSS | 2 |
+| | JSONP Injection | 1 |
+| | SSTI/RCE via Template | 1 |
+| | CSP Bypass | 1 |
+| **XSS Total** | **6 Vulnerabilities** | **6** |
+| **Server-Side Request Forgery (SSRF)** | SSRF / Internal Network Access | 1 |
+| **SSRF Total** | **1 Vulnerability** | **1** |
+| **Code Security Issues** | Dangerous Sinks (Code Execution) | 23 |
+| | Data Security Issues (Plaintext Storage) | 27 |
+| **Code Analysis Total** | **50 Issues** | **50** |
+| | | |
+| **TOTAL EXPLOITS IDENTIFIED** | **61 Vulnerabilities + Issues** | **61** |
+
+### Key Findings
+
+- **Critical Issues:** 12+ critical authentication flaws, 9+ authorization bypass vectors, 5+ SQL injection points
+- **Authentication Weaknesses:** Complete absence of HTTPS, weak rate limiting, insecure session cookies, MD5 password storage
+- **Authorization Bypasses:** Multiple privilege escalation paths, inadequate access controls on sensitive operations
+- **Injection Vulnerabilities:** Multiple attack vectors across SQL, NoSQL, code execution, and template engines
+- **Data Security:** Credit card numbers stored in plaintext, TOTP secrets exposed, MD5 hashing without salt
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
