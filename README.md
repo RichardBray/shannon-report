@@ -1,6 +1,6 @@
 # Shannon Reports
 
-A collection of security assessment reports generated using Shannon, covering various vulnerability classes and security analysis areas.
+A collection of security assessment reports generated using [Shannon](https://github.com/KeygraphHQ/shannon/tree/main) [AI-powered security assessment tool], covering various vulnerability classes and security analysis areas.
 
 ## Target
 
