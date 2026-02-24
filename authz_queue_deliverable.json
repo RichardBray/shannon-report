@@ -1,0 +1,87 @@
+{
+  "vulnerabilities": [
+    {
+      "id": "AUTHZ-001",
+      "title": "Horizontal Privilege Escalation - User Profile Access",
+      "severity": "HIGH",
+      "endpoint": "GET /api/Users/:id",
+      "file": "/repos/juice-shop/server.ts",
+      "line": 359,
+      "method": "GET",
+      "authentication": "Required (JWT)",
+      "authorization": "None",
+      "description": "Authenticated users can view any user's profile by specifying arbitrary user IDs. The endpoint uses Finale auto-generated REST API with authentication (security.isAuthorized()) but no ownership validation. An attacker with a valid JWT token can enumerate and access all user profiles including email addresses, usernames, roles, profile images, and last login IPs.",
+      "vulnerable_code": "app.route('/api/Users/:id').get(security.isAuthorized())",
+      "root_cause": "Finale REST framework generates CRUD endpoints without built-in authorization checks. The middleware only validates JWT token presence/validity but does not verify the authenticated user has permission to access the requested user ID.",
+      "attack_scenario": "1. Attacker registers account (User ID 10)\n2. Attacker logs in and receives JWT token\n3. Attacker sends GET /api/Users/1 with their token\n4. Server validates token (authentication passes)\n5. Server returns User 1's profile without ownership check\n6. Attacker repeats for all user IDs to enumerate database",
+      "impact": "User enumeration, PII disclosure (email, username, role, IP address), GDPR/privacy violations, reconnaissance for targeted attacks",
+      "exploitability": "High - Simple enumeration with valid credentials",
+      "prerequisites": "Valid user account and JWT token",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+      "cvss_score": 6.5,
+      "cwe": "CWE-639: Authorization Bypass Through User-Controlled Key",
+      "remediation": "1. Add Finale resource.read.auth hook to validate userId from token matches requested user ID\n2. OR implement custom route handler with ownership check: UserModel.findOne({ where: { id: req.params.id, id: req.body.UserId } })\n3. Consider if endpoint is necessary - frontend might only need /rest/user/whoami for current user",
+      "references": [
+        "/repos/juice-shop/server.ts:359",
+        "/repos/juice-shop/server.ts:475-500 (Finale initialization)",
+        "/repos/juice-shop/models/user.ts:21-35 (User model)",
+        "/repos/juice-shop/routes/address.ts:16-24 (secure pattern example)"
+      ]
+    },
+    {
+      "id": "AUTHZ-002",
+      "title": "Horizontal Privilege Escalation - Feedback Access",
+      "severity": "MEDIUM",
+      "endpoint": "GET /api/Feedbacks/:id",
+      "file": "/repos/juice-shop/server.ts",
+      "line": 355,
+      "method": "GET",
+      "authentication": "Required (JWT)",
+      "authorization": "None",
+      "description": "Authenticated users can read any user's feedback by specifying arbitrary feedback IDs. The Feedback model includes a UserId field associating feedback with its author, but this relationship is never validated. An attacker can enumerate feedback IDs and access comments and ratings from all users.",
+      "vulnerable_code": "app.use('/api/Feedbacks/:id', security.isAuthorized())",
+      "root_cause": "Finale auto-generates GET /api/Feedbacks/:id endpoint without ownership validation. The security.isAuthorized() middleware only verifies JWT validity, not whether the authenticated user owns the requested feedback. No resource.read.auth hook is configured to enforce access control.",
+      "attack_scenario": "1. Victim submits feedback via POST /api/Feedbacks (Feedback ID 42, UserId 5)\n2. Attacker logs in with their account (UserId 10)\n3. Attacker sends GET /api/Feedbacks/42 with their JWT token\n4. Server validates attacker's token (authentication succeeds)\n5. Server returns victim's feedback including comment, rating, and UserId\n6. Attacker can enumerate all feedback IDs to extract all feedback data",
+      "impact": "Privacy violation - users' feedback comments and ratings exposed to other users. Feedback may contain sensitive information, opinions, or complaints. Breaks user expectation of privacy for submitted feedback.",
+      "exploitability": "High - Requires only valid credentials and sequential ID enumeration",
+      "prerequisites": "Valid user account and JWT token",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:M/I:N/A:N",
+      "cvss_score": 5.7,
+      "cwe": "CWE-639: Authorization Bypass Through User-Controlled Key",
+      "remediation": "1. Add Finale resource.read.auth hook to validate feedback.UserId matches authenticated user's ID\n2. OR implement query filter: FeedbackModel.findOne({ where: { id: req.params.id, UserId: req.body.UserId } })\n3. Consider business requirement: should users access their own feedback or is it write-only/admin-only?",
+      "references": [
+        "/repos/juice-shop/server.ts:355",
+        "/repos/juice-shop/server.ts:480 (Feedback in autoModels)",
+        "/repos/juice-shop/models/feedback.ts:20-28 (Feedback model with UserId)"
+      ]
+    },
+    {
+      "id": "AUTHZ-003",
+      "title": "Unauthenticated Basket Coupon Manipulation - Critical",
+      "severity": "CRITICAL",
+      "endpoint": "PUT /rest/basket/:id/coupon/:coupon",
+      "file": "/repos/juice-shop/routes/coupon.ts",
+      "line": 10,
+      "method": "PUT",
+      "authentication": "None",
+      "authorization": "None",
+      "description": "The coupon application endpoint has NO authentication or authorization. Any user (including unauthenticated attackers) can apply or remove coupons to/from ANY basket by specifying the basket ID in the URL. This allows discount fraud, financial loss, and denial of service attacks.",
+      "vulnerable_code": "export function applyCoupon() {\n  return async ({ params }: Request, res: Response, next: NextFunction) => {\n    const id = params.id\n    const basket = await BasketModel.findByPk(id)\n    await basket.update({ coupon: coupon?.toString() })\n  }\n}",
+      "root_cause": "Three-layer security failure:\n1. Route definition (server.ts:598) has NO security.isAuthorized() middleware\n2. Route definition has NO security.appendUserId() middleware to inject owner ID\n3. Handler (routes/coupon.ts:18) uses BasketModel.findByPk(id) which fetches ANY basket by ID without ownership validation\n4. Handler updates basket.coupon directly without checking basket.UserId against authenticated user",
+      "attack_scenario": "Scenario 1 - Unauthenticated Fraud:\n1. Attacker discovers target has Basket ID 5\n2. Attacker sends PUT /rest/basket/5/coupon/JUICE90 (no auth token)\n3. Application applies 90% discount to victim's basket\n4. Attacker repeats for their own baskets for free products\n\nScenario 2 - Denial of Service:\n1. Attacker enumerates basket IDs (1-1000)\n2. Attacker applies invalid coupon 'XXXXX' to all baskets\n3. Legitimate users receive 404 'Invalid coupon' on checkout\n\nScenario 3 - Cross-User Manipulation:\n1. User A applies premium coupon to their basket\n2. User B removes coupon from User A's basket\n3. User A loses discount without explanation",
+      "impact": "CRITICAL financial and business impact:\n- Revenue Loss: Unauthorized discount application\n- Fraud: Self-service coupon codes without restrictions\n- No Audit Trail: Unauthenticated = no user accountability\n- Business Logic Bypass: Coupon validation circumvented\n- Denial of Service: Attackers can sabotage competitor baskets\n- Reputation Damage: Users affected by coupon manipulation",
+      "exploitability": "Critical - No credentials required, trivial to exploit with simple HTTP requests",
+      "prerequisites": "None - completely unauthenticated access",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:L",
+      "cvss_score": 8.2,
+      "cwe": "CWE-306: Missing Authentication for Critical Function",
+      "remediation": "IMMEDIATE PRIORITY FIX:\n\n1. Add authentication middleware to route:\n   app.put('/rest/basket/:id/coupon/:coupon', \n     security.isAuthorized(), \n     security.appendUserId(), \n     applyCoupon()\n   )\n\n2. Modify handler to validate ownership:\n   const basket = await BasketModel.findOne({\n     where: { \n       id: params.id, \n       UserId: req.body.UserId \n     }\n   })\n   if (!basket) {\n     return res.status(403).json({ \n       status: 'error', \n       message: 'Access denied' \n     })\n   }\n\n3. Add audit logging for coupon applications\n4. Consider rate limiting to prevent enumeration\n5. Add tests for authorization bypass",
+      "references": [
+        "/repos/juice-shop/routes/coupon.ts:10-34 (vulnerable handler)",
+        "/repos/juice-shop/server.ts:598 (route without auth)",
+        "/repos/juice-shop/models/basket.ts:19-27 (Basket model with UserId)",
+        "/repos/juice-shop/routes/address.ts:16-24 (secure ownership pattern)"
+      ]
+    }
+  ]
+}
