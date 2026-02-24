@@ -2,6 +2,10 @@
 
 A collection of security assessment reports generated using Shannon, covering various vulnerability classes and security analysis areas.
 
+## Target
+
+These reports document the security assessment of the [OWASP Juice Shop](https://github.com/juice-shop/juice-shop) project running locally. OWASP Juice Shop is an intentionally vulnerable web application designed for security training and testing.
+
 ## Contents
 
 This repository contains the following security analysis deliverables:
