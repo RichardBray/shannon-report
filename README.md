@@ -30,35 +30,39 @@ Quick links to all security assessment reports:
 This repository contains the following security analysis deliverables:
 
 ### Reconnaissance
-- **recon_deliverable.md** - Initial reconnaissance findings and target enumeration
+1. **recon_deliverable.md** - Initial reconnaissance findings and target enumeration
 
 ### Authentication & Authorization
-- **auth_analysis_deliverable.md** - Authentication vulnerability analysis
-- **auth_exploitation_evidence.md** - Documented authentication exploitation evidence
-- **auth_exploitation_queue.json** - Queue of authentication exploitation scenarios
-- **authz_analysis_deliverable.md** - Authorization vulnerability analysis
-- **authz_exploitation_evidence.md** - Documented authorization exploitation evidence
-- **authz_final_report.md** - Final authorization assessment report
-- **authz_queue_deliverable.json** - Queue of authorization test scenarios
+1. **auth_analysis_deliverable.md** - Authentication vulnerability analysis
+2. **auth_exploitation_evidence.md** - Documented authentication exploitation evidence
+3. **auth_exploitation_queue.json** - Queue of authentication exploitation scenarios
+4. **authz_analysis_deliverable.md** - Authorization vulnerability analysis
+5. **authz_exploitation_evidence.md** - Documented authorization exploitation evidence
+6. **authz_final_report.md** - Final authorization assessment report
+7. **authz_queue_deliverable.json** - Queue of authorization test scenarios
 
 ### Vulnerability Analysis
-- **injection_analysis_deliverable.md** - Injection vulnerability analysis
-- **injection_exploitation_evidence.md** - Injection exploitation evidence
-- **injection_exploitation_queue.json** - Injection exploitation queue
-- **xss_analysis_deliverable.md** - XSS vulnerability analysis
-- **xss_exploitation_evidence.md** - XSS exploitation evidence
-- **xss_exploitation_queue.json** - XSS exploitation queue
-- **ssrf_analysis_deliverable.md** - SSRF vulnerability analysis
-- **ssrf_exploitation_evidence.md** - SSRF exploitation evidence
-- **ssrf_exploitation_queue.json** - SSRF exploitation queue
+1. **injection_analysis_deliverable.md** - Injection vulnerability analysis
+2. **injection_exploitation_evidence.md** - Injection exploitation evidence
+3. **injection_exploitation_queue.json** - Injection exploitation queue
+4. **xss_analysis_deliverable.md** - XSS vulnerability analysis
+5. **xss_exploitation_evidence.md** - XSS exploitation evidence
+6. **xss_exploitation_queue.json** - XSS exploitation queue
+7. **ssrf_analysis_deliverable.md** - SSRF vulnerability analysis
+8. **ssrf_exploitation_evidence.md** - SSRF exploitation evidence
+9. **ssrf_exploitation_queue.json** - SSRF exploitation queue
 
 ### Code & Comprehensive Assessment
-- **code_analysis_deliverable.md** - Source code security analysis
-- **comprehensive_security_assessment_report.md** - Full security assessment summary
+1. **code_analysis_deliverable.md** - Source code security analysis
+2. **comprehensive_security_assessment_report.md** - Full security assessment summary
 
 ## Usage
 
 These reports are reference materials from Shannon security testing. Each deliverable contains analysis findings, exploitation evidence, and test scenarios for their respective vulnerability classes.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## Notes
 
